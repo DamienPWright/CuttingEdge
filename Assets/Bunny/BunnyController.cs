@@ -9,12 +9,12 @@ enum BunnyState {
 
 public class BunnyController : MonoBehaviour
 {
-    private Hashtable renderers;
+    private Dictionary<string, SpriteRenderer> renderers;
 
     // Start is called before the first frame update
     void Start()
     {
-        renderers = new Hashtable();
+        renderers = new Dictionary<string, SpriteRenderer>();
         SpriteRenderer[] the_renderers = this.GetComponentsInChildren<SpriteRenderer>();
         foreach(SpriteRenderer r in the_renderers) {
             Debug.Log(r.gameObject.name);
