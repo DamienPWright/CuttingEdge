@@ -2,12 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+enum GameState {
+    Start,
+    Boot,
+}
+
+public struct Row {
+    [SerializeField] public GameObject player;
+    [SerializeField] public List<GameObject> bunnies;
+    [SerializeField] public GameObject boss;
+}
+
 public class GameManager : MonoBehaviour {
+    [SerializeField] public GameObject bunny_prefab;
+    [SerializeField] public List<Row> rows;
 
-    [SerializeField] List<LCD_Gameobject> gameobjects;
+    [SerializeField] float row_spacing = 0.02f;
+    [SerializeField] float bunny_spacing = 0.02f;
+    [SerializeField] float padding = 1.0f;
 
-    [SerializeField] List<LCD_Bunny> bunnies;
-    [SerializeField] List<LCD_Bullet> bullets;
 
     float Step_Timer = 0;
     float Step_Time = 1;
@@ -24,22 +37,49 @@ public class GameManager : MonoBehaviour {
             return;
         }
         _instance = this;
-        //populate lists
-        /*
-        LCD_Gameobject[] gos = FindObjectsOfType<LCD_Bunny>();
-        foreach (LCD_Bunny go in gos)
-        {
-            bunnies.Add(go);
-        }
-        LCD_Gameobject[] boolets = FindObjectsOfType<LCD_Bullet>();
-        foreach (LCD_Bullet boolet in boolets)
-        {
-            bullets.Add(boolet);
-        }
-        */
+        CreateRows(3, 4, 3, 5, -5, 5);
     }
 
-    public LCD_Bunny checkBunnyAtPosition(int x_pos, int y_pos)
+
+    private void CreateRows(int n, int bunnies, float top, float bot, float left, float right)
+    {
+        float height = top - bot;
+        float width = right - left;
+        float x = left;
+        float y = top;
+        float z = 1.0f;
+        float h_spacing = 3f;
+        float v_spacing = 2.5f;
+
+        List<Row> l = new List<Row>();
+        for (int i = 0; i < n; i++)
+        {
+            Row r = new Row();
+            x = left;
+            var b = Instantiate(bunny_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
+            r.boss = b;
+            b = Instantiate(bunny_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
+            r.player = b;
+            r.bunnies = new List<GameObject>();
+            for (int j = 0; j < bunnies; j++)
+            {
+                b = Instantiate(bunny_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
+                r.bunnies.Add(b);
+                x += h_spacing;
+            }
+            y -= v_spacing;
+            l.Add(r);
+        }
+        rows = l;
+
+
+
+
+
+    }
+}
+
+    /*public LCD_Bunny checkBunnyAtPosition(int x_pos, int y_pos)
     {
         return checkObjectAtPosition(x_pos, y_pos, bunnies);
     }
@@ -84,4 +124,4 @@ public class GameManager : MonoBehaviour {
         }
         return false;
     }
-}
+}*/

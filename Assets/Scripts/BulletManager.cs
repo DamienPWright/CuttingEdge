@@ -24,7 +24,7 @@ public class BulletManager : MonoBehaviour {
             LCD_Bullet newbullet = Instantiate<LCD_Bullet>(bullet);
             newbullet.gameObject.SetActive(false);
             bullets.Add(newbullet);
-            GameManager._instance.AddBullet(newbullet);
+            //GameManager._instance.AddBullet(newbullet);
         }
 	}
 	

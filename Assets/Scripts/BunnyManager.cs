@@ -21,13 +21,13 @@ public class BunnyManager : MonoBehaviour
         }
         _instance = this;
         bunnies = new List<LCD_Bunny>();
-        for (int i = 0; i < maxBunnies; i++)
+        /*for (int i = 0; i < maxBunnies; i++)
         {
             LCD_Bunny newbunny = Instantiate<LCD_Bunny>(bunny);
             newbunny.gameObject.SetActive(false);
             bunnies.Add(newbunny);
             GameManager._instance.AddBunny(newbunny);
-        }
+        }*/
     }
 
     // Update is called once per frame

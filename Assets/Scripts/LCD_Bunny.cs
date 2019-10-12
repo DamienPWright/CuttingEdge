@@ -6,7 +6,7 @@ public class LCD_Bunny : LCD_MovingObject {
 
     protected override void CheckCollisionAt(int Xpos, int Ypos)
     {
-        LCD_Bullet bullet = GameManager._instance.checkBulletAtPosition(Xpos, Ypos);
+        /*LCD_Bullet bullet = GameManager._instance.checkBulletAtPosition(Xpos, Ypos);
         if (bullet != null)
         {
             //Trigger the collided function on the bullet,
@@ -18,7 +18,7 @@ public class LCD_Bunny : LCD_MovingObject {
             OnBulletCollidedWithBunny(bullet);
             //Trigger the collided function on this
             Debug.Log("Found Bullet!");
-        }
+        }*/
     }
 
     public void OnBulletCollidedWithBunny(LCD_Bullet bullet)
@@ -53,10 +53,10 @@ public class LCD_Bunny : LCD_MovingObject {
 
     protected override void OnEndOfLane()
     {
-        if (GameManager._instance.CheckForPlayer(y_pos_index))
+        /*if (GameManager._instance.CheckForPlayer(y_pos_index))
         {
             Debug.Log("Hit the player!");
-        }
+        }*/
         gameObject.SetActive(false);
     }
 }

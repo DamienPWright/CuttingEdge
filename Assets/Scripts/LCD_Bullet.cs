@@ -13,13 +13,13 @@ public class LCD_Bullet : LCD_MovingObject
             return;
         }
         //Debug.Log(Xpos + ", " + Ypos);
-        LCD_Bunny bunny = GameManager._instance.checkBunnyAtPosition(Xpos, Ypos);
+        /*LCD_Bunny bunny = GameManager._instance.checkBunnyAtPosition(Xpos, Ypos);
         if (bunny != null)
         {
             //Debug.Log("Found bunny!");
             bunny.OnBulletCollidedWithBunny(this);
             OnBulletCollidedWithBunny();
-        }
+        }*/
     }
 
     
@@ -51,10 +51,10 @@ public class LCD_Bullet : LCD_MovingObject
             base.OnEndOfLane();
             return;
         }
-        if (GameManager._instance.CheckForPlayer(y_pos_index))
+        /*if (GameManager._instance.CheckForPlayer(y_pos_index))
         {
             Debug.Log("Hit the player!");
-        }
+        }*/
         gameObject.SetActive(false);
     }
 }
