@@ -465,6 +465,12 @@ MonoBehaviour:
   player_spacing: 0
   top: 4
   left: -10
+  BunnyTick: 0.25
+  PlayerBulletTick: 0.125
+  BossTick: 0.2
+  BossBulletTick: 0.05
+  BOOT_DELAY: 1
+  GAME_START_DELAY: 1
   state_first_time: 1
   delay_timer: 1
   bunny_timer: 1

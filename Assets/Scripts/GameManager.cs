@@ -31,15 +31,15 @@ public class GameManager : MonoBehaviour {
     [SerializeField] float top = 5f;
     [SerializeField] float left = -13f;
 
-    [SerializeField] public static float BunnyTick;
-    [SerializeField] public static float PlayerBulletTick;
-    [SerializeField] public static float BossTick;
-    [SerializeField] public static float BossBulletTick;
+    [SerializeField] public float BunnyTick = 0.25f;
+    [SerializeField] public float PlayerBulletTick = 0.125f;
+    [SerializeField] public float BossTick = 0.2f;
+    [SerializeField] public float BossBulletTick = 0.05f;
 
     public const int N_ROWS = 3;
     public const int N_BUNNIES = 4;
-    public const float BOOT_DELAY = 1.0f;
-    public const float GAME_START_DELAY = 1.0f;    
+    [SerializeField] public float BOOT_DELAY = 1.0f;
+    [SerializeField] public float GAME_START_DELAY = 1.0f;    
 
     float Step_Timer = 0.0f;
     float Step_Time = 1.0f;
@@ -124,9 +124,19 @@ public class GameManager : MonoBehaviour {
                 }
                 break;
             case GameState.BunnyStage:
+                if(state_first_time) {
+                    if(onBeginBunny != null) {
+                        onBeginBunny();
+                    }
+                }
                 //if bunny over, switch to boss
                 break;
             case GameState.BossStage:
+                if(state_first_time) {
+                    if(onBeginBoss != null) {
+                        onBeginBoss();
+                    }
+                }
                 //if boss over, switch to bunny
                 break;
             case GameState.Ending:
@@ -236,6 +246,11 @@ public class GameManager : MonoBehaviour {
     public delegate void BossBulletTickEvent(List<Row> rows);
     public static event BossBulletTickEvent onBossBulletTick;
 
+    public delegate void BeginBossEvent();
+    public static event BeginBossEvent onBeginBoss;
+
+    public delegate void BeginBunnyEvent();
+    public static event BeginBunnyEvent onBeginBunny;
 
 
 
