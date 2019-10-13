@@ -7,8 +7,10 @@ enum BossState {
     Bunny,
 }
 
-public class BossController : MonoBehaviour
+public class BossController : LCD_Gameobject
 {
+    public int row = -1;
+
     private Dictionary<string, SpriteRenderer> renderers;
 
     // Start is called before the first frame update

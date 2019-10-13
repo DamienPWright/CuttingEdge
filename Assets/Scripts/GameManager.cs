@@ -27,7 +27,10 @@ public class GameManager : MonoBehaviour {
     [SerializeField] float bunny_spacing = 3f;
     [SerializeField] float boss_spacing = 1f;
     [SerializeField] float player_spacing = 1f;
-    [SerializeField] float padding = 1.0f;
+
+    [SerializeField] float top = 5f;
+    [SerializeField] float left = -13f;
+
 
     public const int N_ROWS = 3;
     public const int N_BUNNIES = 4;
@@ -36,8 +39,6 @@ public class GameManager : MonoBehaviour {
 
     float Step_Timer = 0.0f;
     float Step_Time = 1.0f;
-    public Player player;
-
     public static GameManager _instance;
 
     private GameState state = GameState.Start;
@@ -52,16 +53,12 @@ public class GameManager : MonoBehaviour {
             return;
         }
         _instance = this;
-<<<<<<< HEAD
-        CreateRows(3, 4, 4, 5, -6, 5);
-=======
         SwitchState(GameState.Start);
         ResetGame();
->>>>>>> 5babf196982e31b23f2dc1a0ba63cb3bdc9506a3
     }
 
     public void ResetGame() {
-        CreateRows(3, 5, -5, 5);
+        CreateRows();
         
     }
 
@@ -108,12 +105,10 @@ public class GameManager : MonoBehaviour {
         state_first_time = false;
     }
 
-    private void CreateRows(float top, float bot, float left, float right)
+    private void CreateRows()
     {
         int n = N_ROWS;
         int bunnies = N_BUNNIES;
-        float height = top - bot;
-        float width = right - left;
         float x = left;
         float y = top;
         float z = 1.0f;
@@ -124,6 +119,7 @@ public class GameManager : MonoBehaviour {
             Row r = new Row();
             x = left;
             var b = Instantiate(player_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
+            b.GetComponent<LCD_Gameobject>().row = i;
             r.player = b;
             x += player_spacing;
             x += bunny_spacing;
@@ -131,11 +127,13 @@ public class GameManager : MonoBehaviour {
             for (int j = 0; j < bunnies; j++)
             {
                 b = Instantiate(bunny_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
+                b.GetComponent<LCD_Gameobject>().row = i;
                 r.bunnies.Add(b);
                 x += bunny_spacing;
             }
             x += player_spacing;
             b = Instantiate(boss_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
+                b.GetComponent<LCD_Gameobject>().row = i;
             r.boss = b;
             y -= row_spacing;
             l.Add(r);

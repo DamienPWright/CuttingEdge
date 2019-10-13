@@ -7,8 +7,10 @@ enum PlayerState {
     Bunny,
 }
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : LCD_Gameobject
 {
+    public int row = -1;
+
     private Dictionary<string, SpriteRenderer> renderers;
 
     // Start is called before the first frame update
