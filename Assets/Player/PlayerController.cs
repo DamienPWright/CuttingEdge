@@ -30,7 +30,7 @@ public class PlayerController : LCD_Gameobject
     // Update is called once per frame
     void Update()
     {
-        if(Random.value < 0.2) {
+        /*if(Random.value < 0.2) {
             foreach(SpriteRenderer r in renderers.Values) {
                 if(Random.value < 0.5) {
                     r.enabled = false;
@@ -39,6 +39,6 @@ public class PlayerController : LCD_Gameobject
                 }
             }
         }
-
+*/
     }
 }

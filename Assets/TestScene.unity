@@ -809,7 +809,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00
+  m_text: 88
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6cff6112c18a99101ad516cf87f9c152, type: 2}
   m_sharedMaterial: {fileID: 869817083846058478, guid: 6cff6112c18a99101ad516cf87f9c152,

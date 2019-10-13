@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum LCDForceKind {
+    Normal,
+    Off,
+    On,
+}
+
 enum GameState {
     Start,
     Boot,
@@ -38,9 +44,12 @@ public class GameManager : MonoBehaviour {
 
     public const int N_ROWS = 3;
     public const int N_BUNNIES = 4;
-    [SerializeField] public float BOOT_DELAY = 1.0f;
+    [SerializeField] public float BOOT_DELAY = 2.0f;
     [SerializeField] public float GAME_START_DELAY = 1.0f;    
     [SerializeField] public int N_LIVES = 5;    
+    
+    [SerializeField] public static Color32 NORMAL_COLOR = new Color32(0, 0, 0, 255);
+    [SerializeField] public static Color32 OFF_COLOR = new Color32(255, 0, 0, 0);
 
     float Step_Timer = 0.0f;
     float Step_Time = 1.0f;
@@ -101,15 +110,18 @@ public class GameManager : MonoBehaviour {
         if(state.ToString() != oldState) {
             oldState = state.ToString();
             Debug.Log("State " + state.ToString());
-
+            Debug.Log(state_first_time.ToString());
+            state_first_time = true;
         }
         switch(state) {
             case GameState.Start:
+                //onLCDForce(LCDForceKind.Off);
                 SwitchState(GameState.Boot);
                 break;
             case GameState.Boot:
                 if(state_first_time) {
                     // Turn everything on
+                    onLCDForce(LCDForceKind.On);
                     delay_timer = BOOT_DELAY;
                 }
                 if(delay_timer <= 0.0f) {
@@ -118,7 +130,8 @@ public class GameManager : MonoBehaviour {
                 break;
             case GameState.NewGame:
                 if(state_first_time) {
-                    
+                    onLCDForce(LCDForceKind.Normal);
+                    Debug.Log("Going Normal");
                     delay_timer = GAME_START_DELAY;
                     ClearGame();
                     onScore(stage, score, highscore);
@@ -193,6 +206,7 @@ public class GameManager : MonoBehaviour {
     //Update is called every frame.
     void Update()
     {
+        delay_timer -= Time.deltaTime;
         if(onPlayerLifeChange != null) { onPlayerLifeChange(lives); }
 
         bunny_timer -= Time.deltaTime;
@@ -266,6 +280,9 @@ public class GameManager : MonoBehaviour {
 
     public delegate void BossShootEvent();
     public static event BossShootEvent onBossShoot;
+
+    public delegate void LCDForceEvent(LCDForceKind kind);
+    public static event LCDForceEvent onLCDForce;
 
 }
 
