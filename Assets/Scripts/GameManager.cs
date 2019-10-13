@@ -252,7 +252,14 @@ public class GameManager : MonoBehaviour {
     public delegate void BeginBunnyEvent();
     public static event BeginBunnyEvent onBeginBunny;
 
+    public delegate void PlayerHurtEvent();
+    public static event PlayerHurtEvent onPlayerHurt;
 
+    public delegate void PlayerShootEvent();
+    public static event PlayerShootEvent onPlayerShoot;
+
+    public delegate void BossShootEvent();
+    public static event BossShootEvent onBossShoot;
 
 }
 
