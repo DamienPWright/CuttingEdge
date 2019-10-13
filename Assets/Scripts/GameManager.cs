@@ -31,6 +31,10 @@ public class GameManager : MonoBehaviour {
     [SerializeField] float top = 5f;
     [SerializeField] float left = -13f;
 
+    [SerializeField] public static float BunnyTick;
+    [SerializeField] public static float PlayerBulletTick;
+    [SerializeField] public static float BossTick;
+    [SerializeField] public static float BossBulletTick;
 
     public const int N_ROWS = 3;
     public const int N_BUNNIES = 4;
@@ -44,6 +48,13 @@ public class GameManager : MonoBehaviour {
     private GameState state = GameState.Start;
     public bool state_first_time = true;
     public float delay_timer = 0.0f;
+
+
+    public float bunny_timer;
+    public float player_bullet_timer;
+    public float boss_timer;
+    public float boss_bullet_timer;
+
     private void Awake()
     {
         if(_instance != null)
@@ -58,8 +69,11 @@ public class GameManager : MonoBehaviour {
     }
 
     public void ResetGame() {
+        bunny_timer = BunnyTick;
+        player_bullet_timer = PlayerBulletTick;
+        boss_timer = BossTick;
+        boss_bullet_timer = BossBulletTick;
         CreateRows();
-        
     }
 
     private void SwitchState(GameState new_state) {
@@ -128,6 +142,7 @@ public class GameManager : MonoBehaviour {
             {
                 b = Instantiate(bunny_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
                 b.GetComponent<LCD_Gameobject>().row = i;
+                b.GetComponent<BunnyController>().col = j;
                 r.bunnies.Add(b);
                 x += bunny_spacing;
             }
@@ -141,57 +156,62 @@ public class GameManager : MonoBehaviour {
         rows = l;
 
 
-        //Update is called every frame.
-        void Update()
-        {
-            
+    }
+    //Update is called every frame.
+    void Update()
+    {
+        Debug.Log("Update GM");
+        bunny_timer -= Time.deltaTime;
+        player_bullet_timer -= Time.deltaTime;
+        boss_timer -= Time.deltaTime;
+        boss_bullet_timer -= Time.deltaTime;
+        if(bunny_timer <= 0) {
+            bunny_timer = BunnyTick;
+            if(onBunnyTick != null) {
+                onBunnyTick(rows);
+            }
+        }
+        if(player_bullet_timer <= 0) {
+            player_bullet_timer = PlayerBulletTick;
+            if(onPlayerBulletTick != null) {
+                onPlayerBulletTick(rows);
+            }
+        }
+        if(boss_timer <= 0) {
+            boss_timer = BossTick;
+            if(onBossTick != null) {
+                onBossTick(rows);
+            }
+        }
+        if(boss_bullet_timer <= 0) {
+            boss_bullet_timer = BossBulletTick;
+            if(onBossBulletTick != null) {
+                onBossBulletTick(rows);
+            }
         }
     }
+
+
+
+    public delegate void ScoreEvent();
+    public static event ScoreEvent onScore;
+
+    public delegate void PlayerBulletTickEvent(List<Row> rows);
+    public static event PlayerBulletTickEvent onPlayerBulletTick;
+
+    
+    public delegate void BunnyTickEvent(List<Row> rows);
+    public static event BunnyTickEvent onBunnyTick;
+
+
+    public delegate void BossTickEvent(List<Row> rows);
+    public static event BossTickEvent onBossTick;
+
+    public delegate void BossBulletTickEvent(List<Row> rows);
+    public static event BossBulletTickEvent onBossBulletTick;
+
+
+
+
 }
 
-    /*public LCD_Bunny checkBunnyAtPosition(int x_pos, int y_pos)
-    {
-        return checkObjectAtPosition(x_pos, y_pos, bunnies);
-    }
-
-    public LCD_Bullet checkBulletAtPosition(int x_pos, int y_pos)
-    {
-        return checkObjectAtPosition(x_pos, y_pos, bullets);
-    }
-
-    public T checkObjectAtPosition<T>(int x_pos, int y_pos, List<T> list) where T : LCD_MovingObject
-    {
-        T objectCollidedWith = null;
-        foreach (T thing in list)
-        {
-            if (!thing.gameObject.activeSelf)
-            {
-                continue;
-            }
-            if ((x_pos == thing.GridXPos) && (y_pos == thing.GridYPos))
-            {
-                objectCollidedWith = thing;
-            }
-        }
-        return objectCollidedWith;
-    }
-
-    public void AddBullet(LCD_Bullet bullet)
-    {
-        bullets.Add(bullet);
-    }
-
-    public void AddBunny(LCD_Bunny bunny)
-    {
-        bunnies.Add(bunny); 
-    }
-
-    public bool CheckForPlayer(float y_pos)
-    {
-        if(player.Ypos == y_pos)
-        {
-            return true;
-        }
-        return false;
-    }
-}*/

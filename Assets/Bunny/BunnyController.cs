@@ -10,6 +10,7 @@ enum BunnyState {
 public class BunnyController : LCD_Gameobject
 {
     public int row = -1;
+    public int col = -1;
     private Dictionary<string, SpriteRenderer> renderers;
 
     // Start is called before the first frame update
@@ -26,6 +27,7 @@ public class BunnyController : LCD_Gameobject
         foreach(SpriteRenderer r in renderers.Values) {
             r.enabled = false;
         }
+        GameManager.onBunnyTick += DoTick;
     }
 
     // Update is called once per frame
@@ -41,5 +43,20 @@ public class BunnyController : LCD_Gameobject
             }
         }
 
+    }
+
+    
+/*  void OnEnable()
+    {
+        GameManager.onBunnyTick += DoTick;
+    }
+    void OnDisable()
+    {
+        GameManager.onBunnyTick -= DoTick;
+    }*/
+
+    void DoTick(List<Row> rows)
+    {
+        Debug.Log("Tick in BunnyController");
     }
 }
