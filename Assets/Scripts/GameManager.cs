@@ -55,6 +55,11 @@ public class GameManager : MonoBehaviour {
     public float boss_timer;
     public float boss_bullet_timer;
 
+
+    public int score = 0;
+    public int highscore = 0;
+    public int stage = 0;
+
     private void Awake()
     {
         if(_instance != null)
@@ -73,15 +78,27 @@ public class GameManager : MonoBehaviour {
         player_bullet_timer = PlayerBulletTick;
         boss_timer = BossTick;
         boss_bullet_timer = BossBulletTick;
+        highscore = 0;
         CreateRows();
+        ClearGame();
     }
-
+    public void ClearGame() {
+        score = 0;
+        stage = 0;
+    }
     private void SwitchState(GameState new_state) {
         state_first_time = true;
         state = new_state;
     }
 
+    string oldState = "";
+
     private void HandleState() {
+        if(state.ToString() != oldState) {
+            oldState = state.ToString();
+            Debug.Log("State " + state.ToString());
+
+        }
         switch(state) {
             case GameState.Start:
                 SwitchState(GameState.Boot);
@@ -99,6 +116,8 @@ public class GameManager : MonoBehaviour {
                 if(state_first_time) {
                     
                     delay_timer = GAME_START_DELAY;
+                    ClearGame();
+                    onScore(stage, score, highscore);
                 }
                 if(delay_timer <= 0.0f) {
                     SwitchState(GameState.BunnyStage);
@@ -160,7 +179,6 @@ public class GameManager : MonoBehaviour {
     //Update is called every frame.
     void Update()
     {
-        Debug.Log("Update GM");
         bunny_timer -= Time.deltaTime;
         player_bullet_timer -= Time.deltaTime;
         boss_timer -= Time.deltaTime;
@@ -189,11 +207,19 @@ public class GameManager : MonoBehaviour {
                 onBossBulletTick(rows);
             }
         }
+
+        if(Random.value < 0.1) {
+            score += 1;
+            highscore += 2;
+            stage += 1;
+            onScore(stage, score, highscore);
+        }
+        HandleState();
     }
 
 
 
-    public delegate void ScoreEvent();
+    public delegate void ScoreEvent(int stage, int score, int highscore);
     public static event ScoreEvent onScore;
 
     public delegate void PlayerBulletTickEvent(List<Row> rows);

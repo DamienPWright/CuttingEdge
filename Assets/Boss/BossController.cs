@@ -9,8 +9,6 @@ enum BossState {
 
 public class BossController : LCD_Gameobject
 {
-    public int row = -1;
-
     private Dictionary<string, SpriteRenderer> renderers;
 
     // Start is called before the first frame update
@@ -19,9 +17,9 @@ public class BossController : LCD_Gameobject
         renderers = new Dictionary<string, SpriteRenderer>();
         SpriteRenderer[] the_renderers = this.GetComponentsInChildren<SpriteRenderer>();
         foreach(SpriteRenderer r in the_renderers) {
-            Debug.Log(r.gameObject.name);
+            //Debug.Log(r.gameObject.name);
             SpriteRenderer rend = r.gameObject.GetComponent<SpriteRenderer>();
-            Debug.Log(rend);
+            //Debug.Log(rend);
             this.renderers.Add(r.gameObject.name, rend);
         }
         foreach(SpriteRenderer r in renderers.Values) {
