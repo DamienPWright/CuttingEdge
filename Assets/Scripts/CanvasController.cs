@@ -18,13 +18,13 @@ public class CanvasController : MonoBehaviour
     void UpdateScore(int stage, int score, int highscore)
     {
         if(stageText != null) {
-            stageText.SetText(stage.ToString());
+            stageText.SetText(stage.ToString("00"));
         }
         if(scoreText != null) {
-            scoreText.SetText(score.ToString());
+            scoreText.SetText(score.ToString("000000"));
         }
         if(highscoreText != null) {
-            highscoreText.SetText(highscore.ToString());
+            highscoreText.SetText(highscore.ToString("000000"));
         }
     }
 
