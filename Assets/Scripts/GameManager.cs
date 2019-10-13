@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour {
     public const int N_BUNNIES = 4;
     [SerializeField] public float BOOT_DELAY = 1.0f;
     [SerializeField] public float GAME_START_DELAY = 1.0f;    
+    [SerializeField] public int N_LIVES = 5;    
 
     float Step_Timer = 0.0f;
     float Step_Time = 1.0f;
@@ -59,6 +60,7 @@ public class GameManager : MonoBehaviour {
     public int score = 0;
     public int highscore = 0;
     public int stage = 0;
+    public int lives = 0;
 
     private void Awake()
     {
@@ -85,6 +87,8 @@ public class GameManager : MonoBehaviour {
     public void ClearGame() {
         score = 0;
         stage = 0;
+        lives = N_LIVES;
+        if(onPlayerLifeChange != null) { onPlayerLifeChange(lives); }
     }
     private void SwitchState(GameState new_state) {
         state_first_time = true;
@@ -189,6 +193,8 @@ public class GameManager : MonoBehaviour {
     //Update is called every frame.
     void Update()
     {
+        if(onPlayerLifeChange != null) { onPlayerLifeChange(lives); }
+
         bunny_timer -= Time.deltaTime;
         player_bullet_timer -= Time.deltaTime;
         boss_timer -= Time.deltaTime;
@@ -252,8 +258,8 @@ public class GameManager : MonoBehaviour {
     public delegate void BeginBunnyEvent();
     public static event BeginBunnyEvent onBeginBunny;
 
-    public delegate void PlayerHurtEvent();
-    public static event PlayerHurtEvent onPlayerHurt;
+    public delegate void PlayerLifeChangeEvent(int lives);
+    public static event PlayerLifeChangeEvent onPlayerLifeChange;
 
     public delegate void PlayerShootEvent();
     public static event PlayerShootEvent onPlayerShoot;
