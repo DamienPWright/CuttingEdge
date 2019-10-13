@@ -231,8 +231,8 @@ MonoBehaviour:
     type: 3}
   boss_prefab: {fileID: 4110655382939397660, guid: d9acda3375347547298fd969cb0ffff4,
     type: 3}
-  row_spacing: 5
-  bunny_spacing: 2.5
+  row_spacing: 4.5
+  bunny_spacing: 2
   boss_spacing: 3
   player_spacing: 3
   padding: 1

@@ -5,6 +5,10 @@ using UnityEngine;
 enum GameState {
     Start,
     Boot,
+    NewGame,
+    BunnyStage,
+    BossStage,
+    Ending,
 }
 
 public struct Row {
@@ -25,13 +29,20 @@ public class GameManager : MonoBehaviour {
     [SerializeField] float player_spacing = 1f;
     [SerializeField] float padding = 1.0f;
 
+    public const int N_ROWS = 3;
+    public const int N_BUNNIES = 4;
+    public const float BOOT_DELAY = 1.0f;
+    public const float GAME_START_DELAY = 1.0f;    
 
-    float Step_Timer = 0;
-    float Step_Time = 1;
+    float Step_Timer = 0.0f;
+    float Step_Time = 1.0f;
     public Player player;
 
     public static GameManager _instance;
 
+    private GameState state = GameState.Start;
+    public bool state_first_time = true;
+    public float delay_timer = 0.0f;
     private void Awake()
     {
         if(_instance != null)
@@ -41,12 +52,66 @@ public class GameManager : MonoBehaviour {
             return;
         }
         _instance = this;
+<<<<<<< HEAD
         CreateRows(3, 4, 4, 5, -6, 5);
+=======
+        SwitchState(GameState.Start);
+        ResetGame();
+>>>>>>> 5babf196982e31b23f2dc1a0ba63cb3bdc9506a3
     }
 
+    public void ResetGame() {
+        CreateRows(3, 5, -5, 5);
+        
+    }
 
-    private void CreateRows(int n, int bunnies, float top, float bot, float left, float right)
+    private void SwitchState(GameState new_state) {
+        state_first_time = true;
+        state = new_state;
+    }
+
+    private void HandleState() {
+        switch(state) {
+            case GameState.Start:
+                SwitchState(GameState.Boot);
+                break;
+            case GameState.Boot:
+                if(state_first_time) {
+                    // Turn everything on
+                    delay_timer = BOOT_DELAY;
+                }
+                if(delay_timer <= 0.0f) {
+                    SwitchState(GameState.NewGame);
+                }
+                break;
+            case GameState.NewGame:
+                if(state_first_time) {
+                    
+                    delay_timer = GAME_START_DELAY;
+                }
+                if(delay_timer <= 0.0f) {
+                    SwitchState(GameState.BunnyStage);
+                }
+                break;
+            case GameState.BunnyStage:
+                //if bunny over, switch to boss
+                break;
+            case GameState.BossStage:
+                //if boss over, switch to bunny
+                break;
+            case GameState.Ending:
+                // we get here if we lose
+                // shows scores
+                // press button to move on
+                break;
+        }
+        state_first_time = false;
+    }
+
+    private void CreateRows(float top, float bot, float left, float right)
     {
+        int n = N_ROWS;
+        int bunnies = N_BUNNIES;
         float height = top - bot;
         float width = right - left;
         float x = left;
@@ -78,9 +143,11 @@ public class GameManager : MonoBehaviour {
         rows = l;
 
 
-
-
-
+        //Update is called every frame.
+        void Update()
+        {
+            
+        }
     }
 }
 
