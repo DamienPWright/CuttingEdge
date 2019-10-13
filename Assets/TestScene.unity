@@ -227,8 +227,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bunny_prefab: {fileID: 4110655382939397660, guid: 8cfb8d7dff592426685d0b5b814c273b,
     type: 3}
-  row_spacing: 0.2
-  bunny_spacing: 0.2
+  player_prefab: {fileID: 4110655382939397660, guid: bbc08c7535c2901068a1241eed5433fc,
+    type: 3}
+  boss_prefab: {fileID: 4110655382939397660, guid: d9acda3375347547298fd969cb0ffff4,
+    type: 3}
+  row_spacing: 5
+  bunny_spacing: 2.5
+  boss_spacing: 3
+  player_spacing: 3
   padding: 1
   player: {fileID: 0}
 --- !u!4 &1116818448
@@ -333,7 +339,7 @@ Transform:
   m_GameObject: {fileID: 1235747802}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 10}
-  m_LocalScale: {x: 20, y: 20, z: 1}
+  m_LocalScale: {x: 32, y: 18, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
@@ -400,7 +406,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

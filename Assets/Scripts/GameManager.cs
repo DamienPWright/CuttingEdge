@@ -15,10 +15,14 @@ public struct Row {
 
 public class GameManager : MonoBehaviour {
     [SerializeField] public GameObject bunny_prefab;
+    [SerializeField] public GameObject player_prefab;
+    [SerializeField] public GameObject boss_prefab;
     [SerializeField] public List<Row> rows;
 
-    [SerializeField] float row_spacing = 0.02f;
-    [SerializeField] float bunny_spacing = 0.02f;
+    [SerializeField] float row_spacing = 2f;
+    [SerializeField] float bunny_spacing = 3f;
+    [SerializeField] float boss_spacing = 1f;
+    [SerializeField] float player_spacing = 1f;
     [SerializeField] float padding = 1.0f;
 
 
@@ -37,7 +41,7 @@ public class GameManager : MonoBehaviour {
             return;
         }
         _instance = this;
-        CreateRows(3, 4, 3, 5, -5, 5);
+        CreateRows(3, 4, 4, 5, -6, 5);
     }
 
 
@@ -48,26 +52,27 @@ public class GameManager : MonoBehaviour {
         float x = left;
         float y = top;
         float z = 1.0f;
-        float h_spacing = 3f;
-        float v_spacing = 2.5f;
 
         List<Row> l = new List<Row>();
         for (int i = 0; i < n; i++)
         {
             Row r = new Row();
             x = left;
-            var b = Instantiate(bunny_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
-            r.boss = b;
-            b = Instantiate(bunny_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
+            var b = Instantiate(player_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
             r.player = b;
+            x += player_spacing;
+            x += bunny_spacing;
             r.bunnies = new List<GameObject>();
             for (int j = 0; j < bunnies; j++)
             {
                 b = Instantiate(bunny_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
                 r.bunnies.Add(b);
-                x += h_spacing;
+                x += bunny_spacing;
             }
-            y -= v_spacing;
+            x += player_spacing;
+            b = Instantiate(boss_prefab, new Vector3(x, y, z), Quaternion.Euler(0, 0, 0));
+            r.boss = b;
+            y -= row_spacing;
             l.Add(r);
         }
         rows = l;
