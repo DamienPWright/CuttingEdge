@@ -33,6 +33,8 @@ public struct Row {
 
 public struct RowInfo {
     public List<BunnyState> bunnies;
+    public List<ShotKind> shots;
+    public List<ShotKind> boss_shots;
 }
 
 public class GameManager : MonoBehaviour {
@@ -311,6 +313,31 @@ public class GameManager : MonoBehaviour {
 
 
     }
+
+
+    List<RowInfo> GetRows()
+    {
+                var rowdata = new List<RowInfo>();
+                foreach (var r in rows)
+                {
+                    var newrow = new RowInfo();
+                    var newbunnies = new List<BunnyState>();
+                    var newshots = new List<ShotKind>();
+                    var new_boss_shots = new List<ShotKind>();
+                    foreach (var b in r.bunnies)
+                    {
+                        newbunnies.Add(b.GetComponent<BunnyController>().state);
+                        newshots.Add(b.GetComponent<BunnyController>().shot_state);
+                        new_boss_shots.Add(b.GetComponent<BunnyController>().boss_shot_state);
+                    }
+                    newrow.bunnies = newbunnies;
+                    newrow.shots = newshots;
+                    newrow.boss_shots = new_boss_shots;
+                    rowdata.Add(newrow);
+                }
+        return rowdata;
+    }
+
     //Update is called every frame.
     void Update()
     {
@@ -324,21 +351,9 @@ public class GameManager : MonoBehaviour {
         if(bunny_timer <= 0) {
             bunny_timer = BunnyTick;
             if(onBunnyTick != null) {
-                var rowdata = new List<RowInfo>();
-                foreach (var r in rows)
-                {
-                    var newrow = new RowInfo();
-                    var newbunnies = new List<BunnyState>();
-                    foreach (var b in r.bunnies)
-                    {
-                        newbunnies.Add(b.GetComponent<BunnyController>().state);
-                    }
-                    newrow.bunnies = newbunnies;
-                    rowdata.Add(newrow);
-                }
                 Debug.Log("Bunny tick");
 
-                onBunnyTick(rowdata);
+                onBunnyTick(GetRows());
                 if(Random.value < BunnyChance) {
                     var row = Random.Range(0, N_ROWS);
                     Debug.Log("New bunny on row " + row.ToString());
@@ -350,21 +365,21 @@ public class GameManager : MonoBehaviour {
             player_bullet_timer = PlayerBulletTick;
             if(onPlayerBulletTick != null) {
                 var rowdata = new List<RowInfo>();
-                onPlayerBulletTick(rowdata);
+                onPlayerBulletTick(GetRows());
             }
         }
         if(boss_timer <= 0) {
             boss_timer = BossTick;
             if(onBossTick != null) {
                 var rowdata = new List<RowInfo>();
-                onBossTick(rowdata);
+                onBossTick(GetRows());
             }
         }
         if(boss_bullet_timer <= 0) {
             boss_bullet_timer = BossBulletTick;
             if(onBossBulletTick != null) {
                 var rowdata = new List<RowInfo>();
-                onBossBulletTick(rowdata);
+                onBossBulletTick(GetRows());
             }
         }
 
@@ -414,7 +429,7 @@ public class GameManager : MonoBehaviour {
     public delegate void PlayerMoveEvent(int row);
     public static event PlayerMoveEvent onPlayerMove;
 
-    public delegate void BossShootEvent();
+    public delegate void BossShootEvent(int row);
     public static event BossShootEvent onBossShoot;
 
     public delegate void LCDForceEvent(LCDForceKind kind);

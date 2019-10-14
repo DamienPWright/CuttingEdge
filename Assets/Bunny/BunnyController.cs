@@ -12,6 +12,8 @@ public enum BunnyState {
 public class BunnyController : LCD_Gameobject
 {
     public BunnyState state = BunnyState.Off;
+    public ShotKind shot_state = ShotKind.None;
+    public ShotKind boss_shot_state = ShotKind.None;
     public int col = -1;
     public bool forced = false;
     private Dictionary<string, SpriteRenderer> renderers;
@@ -33,8 +35,12 @@ public class BunnyController : LCD_Gameobject
         GameManager.onBeginBunny += BeginBunny;
         GameManager.onBeginBoss += BeginBunny;
         GameManager.onBunnyTick += DoTick;
+        GameManager.onBossBulletTick += DoBossBulletTick;
+        GameManager.onPlayerBulletTick += DoPlayerBulletTick;
         GameManager.onLCDForce += DoForce;
         GameManager.onNewBunny += DoNewBunny;
+        GameManager.onBossShoot += DoBossShoot;
+        GameManager.onPlayerShoot += DoPlayerShoot;
     }   
 
     // Update is called once per frame
@@ -105,12 +111,52 @@ public class BunnyController : LCD_Gameobject
     {
         if(col == 0 && state != BunnyState.Off) {
             //GameManager._instance.LifeDown();
-        }
-        if(col < 3) {
-            Debug.Log("Moving bunnies, " + state.ToString() + " -> " + rows[row].bunnies[col + 1].ToString());
-            state = rows[row].bunnies[col + 1];
+        } else if(col < 3) {
+            //Debug.Log("Moving bunnies, " + state.ToString() + " -> " + rows[row].bunnies[col + 1].ToString());
+            shot_state = rows[row].shots[col + 1];
+        } else {
+            shot_state = ShotKind.None;
         }
     }
+
+    void DoBossBulletTick(List<RowInfo> rows)
+    {
+        if(col == 0 && state != BunnyState.Off) {
+            //GameManager._instance.LifeDown();
+        } else if(col < 3) {
+            //Debug.Log("Moving boss shots, " + state.ToString() + " -> " + rows[row].bunnies[col + 1].ToString());
+            boss_shot_state = rows[row].boss_shots[col + 1];
+        } else {
+            boss_shot_state = ShotKind.None;
+        }
+    }
+
+    void DoPlayerBulletTick(List<RowInfo> rows)
+    {
+        if(col == 3 && state != BunnyState.Off) {
+            //GameManager._instance.LifeDown();
+        } else if(col > 0) {
+            //Debug.Log("Moving boss shots, " + state.ToString() + " -> " + rows[row].bunnies[col - 1].ToString());
+            shot_state = rows[row].shots[col - 1];
+        } else {
+            shot_state = ShotKind.None;
+        }
+    }
+
+    void DoBossShoot(int r)
+    {
+        if(col == 3 && boss_shot_state == ShotKind.None) {
+            boss_shot_state = ShotKind.Sword;
+        }
+    }
+
+    void DoPlayerShoot(int r, ShotKind kind)
+    {
+        if(col == 0 && shot_state == ShotKind.None) {
+            shot_state = kind;
+        }
+    }
+
 
     void DoNewBunny(int r)
     {
