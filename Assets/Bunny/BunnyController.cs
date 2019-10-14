@@ -35,6 +35,7 @@ public class BunnyController : LCD_Gameobject
         GameManager.onBeginBunny += BeginBunny;
         GameManager.onBeginBoss += BeginBunny;
         GameManager.onBunnyTick += DoTick;
+        GameManager.onBossTick += DoBossTick;
         GameManager.onBossBulletTick += DoBossBulletTick;
         GameManager.onPlayerBulletTick += DoPlayerBulletTick;
         GameManager.onLCDForce += DoForce;
@@ -153,7 +154,8 @@ public class BunnyController : LCD_Gameobject
 
     void DoBossShoot(int r)
     {
-        if(col == 3 && boss_shot_state == ShotKind.None) {
+        if(row == r && col == 3 && boss_shot_state == ShotKind.None) {
+            Debug.Log("Boss Shot " + r);
             boss_shot_state = ShotKind.Sword;
             UpdateBunnies();
         }
@@ -162,11 +164,15 @@ public class BunnyController : LCD_Gameobject
     void DoPlayerShoot(int r, ShotKind kind)
     {
         if(row == r && col == 0 && shot_state == ShotKind.None) {
+            Debug.Log("Player Shot " + r + " " + kind.ToString());
             shot_state = kind;
             UpdateBunnies();
         }
     }
 
+    void DoBossTick(List<RowInfo> rows) {
+        DoBossShoot(Random.Range(0,3));
+    }
 
     void DoNewBunny(int r)
     {
