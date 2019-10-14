@@ -221,6 +221,15 @@ public class GameManager : MonoBehaviour {
                         onBeginBoss();
                     }
                 }
+
+                if(player_row > 0 && Input.GetKeyDown(KeyCode.UpArrow)) {
+                    player_row -= 1;
+                    onPlayerMove(player_row);
+                } else if(player_row < 2 && Input.GetKeyDown(KeyCode.DownArrow)) {
+                    player_row += 1;
+                    onPlayerMove(player_row);
+                }
+
                 if(delay_timer <= 0) {
                     SwitchState(GameState.BossStage);
                 }
@@ -237,6 +246,14 @@ public class GameManager : MonoBehaviour {
                             onSpawnBoss(r, ShotKind.Sword);
                         }
                     }
+                }
+
+                if(player_row > 0 && Input.GetKeyDown(KeyCode.UpArrow)) {
+                    player_row -= 1;
+                    onPlayerMove(player_row);
+                } else if(player_row < 2 && Input.GetKeyDown(KeyCode.DownArrow)) {
+                    player_row += 1;
+                    onPlayerMove(player_row);
                 }
 
                 if(lives == 0) {
@@ -348,7 +365,7 @@ public class GameManager : MonoBehaviour {
         player_bullet_timer -= Time.deltaTime;
         boss_timer -= Time.deltaTime;
         boss_bullet_timer -= Time.deltaTime;
-        if(bunny_timer <= 0) {
+        if(state == GameState.BunnyStage && bunny_timer <= 0) {
             bunny_timer = BunnyTick;
             if(onBunnyTick != null) {
                 Debug.Log("Bunny tick");
@@ -361,21 +378,21 @@ public class GameManager : MonoBehaviour {
                 }
             }
         }
-        if(player_bullet_timer <= 0) {
+        if((state == GameState.BunnyStage || state == GameState.BossStage) && player_bullet_timer <= 0) {
             player_bullet_timer = PlayerBulletTick;
             if(onPlayerBulletTick != null) {
                 var rowdata = new List<RowInfo>();
                 onPlayerBulletTick(GetRows());
             }
         }
-        if(boss_timer <= 0) {
+        if(state == GameState.BossStage && boss_timer <= 0) {
             boss_timer = BossTick;
             if(onBossTick != null) {
                 var rowdata = new List<RowInfo>();
                 onBossTick(GetRows());
             }
         }
-        if(boss_bullet_timer <= 0) {
+        if(state == GameState.BossStage && boss_bullet_timer <= 0) {
             boss_bullet_timer = BossBulletTick;
             if(onBossBulletTick != null) {
                 var rowdata = new List<RowInfo>();

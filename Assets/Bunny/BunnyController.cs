@@ -92,6 +92,14 @@ public class BunnyController : LCD_Gameobject
         foreach(SpriteRenderer r in renderers.Values) {
             if(r.name == state.ToString()) {
                 r.enabled = true;
+            } else if(r.name == "Skull" && boss_shot_state != ShotKind.None) {
+                r.enabled = true;
+            } else if(r.name == "ShieldWave" && shot_state == ShotKind.Shield) {
+                r.enabled = true;
+            } else if(r.name == "Scythe" && shot_state == ShotKind.Sword) {
+                r.enabled = true;
+            } else if(r.name == "MagicAttack??" && shot_state == ShotKind.Magic) {
+                r.enabled = true;
             } else {
                 r.enabled = false;
             }
@@ -147,13 +155,15 @@ public class BunnyController : LCD_Gameobject
     {
         if(col == 3 && boss_shot_state == ShotKind.None) {
             boss_shot_state = ShotKind.Sword;
+            UpdateBunnies();
         }
     }
 
     void DoPlayerShoot(int r, ShotKind kind)
     {
-        if(col == 0 && shot_state == ShotKind.None) {
+        if(row == r && col == 0 && shot_state == ShotKind.None) {
             shot_state = kind;
+            UpdateBunnies();
         }
     }
 
