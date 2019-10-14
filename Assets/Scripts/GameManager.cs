@@ -166,6 +166,9 @@ public class GameManager : MonoBehaviour {
             case GameState.PreBunny:
                 if(state_first_time) {
                     delay_timer = PREBUNNY_DELAY;
+                    if(onBeginBunny != null) {
+                        onBeginBunny();
+                    }
                 }
                 if(delay_timer <= 0) {
                     SwitchState(GameState.BunnyStage);
@@ -173,15 +176,16 @@ public class GameManager : MonoBehaviour {
                 break;
             case GameState.BunnyStage:
                 if(state_first_time) {
+                    if(onBeginBunny != null) {
+                        onBeginBunny();
+                    }
+
                     player_row = 1;
                     onPlayerMove(player_row);
                     BunnyTick = BunnyTickForStage(stage);
                     BunnyCount = BunniesForStage(stage);
                     BunnyChance = BunnySpawnChanceForStage(stage);
                     Debug.Log("Begin bunny stage: " + BunnyTick.ToString("0.000") + " tick " + BunnyCount.ToString() + " count " + BunnyChance.ToString() + " chance");
-                    if(onBeginBunny != null) {
-                        onBeginBunny();
-                    }
                 }
 
                 if(player_row > 0 && Input.GetKeyDown(KeyCode.UpArrow)) {
@@ -209,6 +213,9 @@ public class GameManager : MonoBehaviour {
             case GameState.PreBoss:
                 if(state_first_time) {
                     delay_timer = PREBOSS_DELAY;
+                    if(onBeginBoss != null) {
+                        onBeginBoss();
+                    }
                 }
                 if(delay_timer <= 0) {
                     SwitchState(GameState.BossStage);

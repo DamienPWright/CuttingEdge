@@ -30,6 +30,8 @@ public class BunnyController : LCD_Gameobject
         foreach(SpriteRenderer r in renderers.Values) {
             r.enabled = false;
         }
+        GameManager.onBeginBunny += BeginBunny;
+        GameManager.onBeginBoss += BeginBunny;
         GameManager.onBunnyTick += DoTick;
         GameManager.onLCDForce += DoForce;
         GameManager.onNewBunny += DoNewBunny;
@@ -50,6 +52,12 @@ public class BunnyController : LCD_Gameobject
 
     }
 
+    void BeginBunny()
+    {
+        foreach(SpriteRenderer r in renderers.Values) {
+            r.enabled = false;
+        }
+    }
     void DoForce(LCDForceKind kind) {
         foreach(SpriteRenderer r in renderers.Values) {
             switch(kind) {
