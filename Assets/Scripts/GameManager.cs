@@ -18,7 +18,9 @@ enum GameState {
     Start,
     Boot,
     NewGame,
+    PreBunny,
     BunnyStage,
+    PreBoss,
     BossStage,
     Ending,
 }
@@ -60,6 +62,8 @@ public class GameManager : MonoBehaviour {
     public const int N_BUNNIES = 4;
     [SerializeField] public float BOOT_DELAY = 2.0f;
     [SerializeField] public float GAME_START_DELAY = 1.0f;    
+    [SerializeField] public float PREBUNNY_DELAY = 0.5f;    
+    [SerializeField] public float PREBOSS_DELAY = 0.5f;    
     [SerializeField] public int N_LIVES = 5;    
     
     [SerializeField] public static Color32 NORMAL_COLOR = new Color32(0, 0, 0, 255);
@@ -159,6 +163,14 @@ public class GameManager : MonoBehaviour {
                     SwitchState(GameState.BunnyStage);
                 }
                 break;
+            case GameState.PreBunny:
+                if(state_first_time) {
+                    delay_timer = PREBUNNY_DELAY;
+                }
+                if(delay_timer <= 0) {
+                    SwitchState(GameState.BunnyStage);
+                }
+                break;
             case GameState.BunnyStage:
                 if(state_first_time) {
                     player_row = 1;
@@ -188,7 +200,19 @@ public class GameManager : MonoBehaviour {
                 } else if(Input.GetKeyDown(KeyCode.Q)) {
                     if(onPlayerShoot != null) { onPlayerShoot(player_row, ShotKind.Sword); }
                 }
+
+                if(Input.GetKeyDown(KeyCode.P)) {
+                    SwitchState(GameState.PreBoss);
+                }
                 //if bunny over, switch to boss
+                break;
+            case GameState.PreBoss:
+                if(state_first_time) {
+                    delay_timer = PREBOSS_DELAY;
+                }
+                if(delay_timer <= 0) {
+                    SwitchState(GameState.BossStage);
+                }
                 break;
             case GameState.BossStage:
                 if(state_first_time) {
@@ -196,12 +220,24 @@ public class GameManager : MonoBehaviour {
                         onBeginBoss();
                     }
                 }
+
+                if(lives == 0) {
+                    SwitchState(GameState.Ending);
+                }
+
+                if(Input.GetKeyDown(KeyCode.P)) {
+                    SwitchState(GameState.PreBunny);
+                }
                 //if boss over, switch to bunny
                 break;
             case GameState.Ending:
                 // we get here if we lose
                 // shows scores
                 // press button to move on
+                if(Input.GetKeyDown(KeyCode.P)) {
+                    SwitchState(GameState.PreBunny);
+                }
+
                 break;
         }
         state_first_time = false;
