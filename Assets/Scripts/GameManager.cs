@@ -153,7 +153,7 @@ public class GameManager : MonoBehaviour {
                     BunnyTick = BunnyTickForStage(stage);
                     BunnyCount = BunniesForStage(stage);
                     BunnyChance = BunnySpawnChanceForStage(stage);
-                    Debug.Log("Begin bunny stage: " + BunnyTick + " tick " + BunnyCount + " count " + BunnyChance + "chance");
+                    Debug.Log("Begin bunny stage: " + BunnyTick.ToString("0.000") + " tick " + BunnyCount.ToString() + " count " + BunnyChance.ToString() + " chance");
                     if(onBeginBunny != null) {
                         onBeginBunny();
                     }
@@ -185,12 +185,14 @@ public class GameManager : MonoBehaviour {
     }
 
     private float BunnyTickForStage(int stage) {
-        return 0.05f * Mathf.Sqrt((float)stage * 3.5f) * 10f;
+        return 0.25f;
+        return 0.3f * Mathf.Sqrt((float)stage * 3.5f);
     }
 
     private float BunnySpawnChanceForStage(int stage)
     {
-        return 0.05f * Mathf.Sqrt((float)stage * 3.5f);
+        return 0.25f;
+        return 0.15f * Mathf.Sqrt((float)stage * 3.5f);
     }
     private void CreateRows()
     {
@@ -255,9 +257,12 @@ public class GameManager : MonoBehaviour {
                     newrow.bunnies = newbunnies;
                     rowdata.Add(newrow);
                 }
+                Debug.Log("Bunny tick");
+
                 onBunnyTick(rowdata);
                 if(Random.value < BunnyChance) {
                     var row = Random.Range(0, N_ROWS - 1);
+                    Debug.Log("New bunny on row " + row.ToString());
                     onNewBunny(row);
                 }
             }

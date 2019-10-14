@@ -4,7 +4,9 @@ using UnityEngine;
 
 public enum BunnyState {
     Off,
-    Bunny,
+    Shield,
+    Sword,
+    Magic,
 }
 
 public class BunnyController : LCD_Gameobject
@@ -72,7 +74,15 @@ public class BunnyController : LCD_Gameobject
     
     void UpdateBunnies()
     {
-        Debug.Log("Update Bunnies");
+        //Debug.Log("Update Bunnies");
+        foreach(SpriteRenderer r in renderers.Values) {
+            if(r.name == state.ToString()) {
+                r.enabled = true;
+            } else {
+                r.enabled = false;
+            }
+            
+        }
     }
 /*  void OnEnable()
     {
@@ -85,18 +95,30 @@ public class BunnyController : LCD_Gameobject
 
     void DoTick(List<RowInfo> rows)
     {
-        if(col == 0 && state == BunnyState.Bunny) {
+        if(col == 0 && state != BunnyState.Off) {
             //GameManager._instance.LifeDown();
         }
-        if(col + 1 < GameManager.N_BUNNIES) {
+        if(col < 3) {
+            Debug.Log("Moving bunnies, " + state.ToString() + " -> " + rows[row].bunnies[col + 1].ToString());
             state = rows[row].bunnies[col + 1];
         }
     }
 
     void DoNewBunny(int r)
     {
+        if(col + 1 < 4) { return; }
         if(r == row) {
-            state = BunnyState.Bunny;
+            var n = Random.Range(1, 3);
+            if(n == 1) {
+                state = BunnyState.Magic;
+            } else if(n == 2) {
+                state = BunnyState.Shield;
+
+            } else {
+                state = BunnyState.Sword;
+
+            }
+            UpdateBunnies();
         }
     }
 }
