@@ -107,7 +107,6 @@ public class GameManager : MonoBehaviour {
         boss_bullet_timer = BossBulletTick;
         highscore = 0;
         CreateRows();
-        ClearGame();
     }
     public void ClearGame() {
         QualitySettings.vSyncCount = 2;
@@ -132,13 +131,16 @@ public class GameManager : MonoBehaviour {
         }
         switch(state) {
             case GameState.Start:
+                if(state_first_time) {
+                    if(onLCDForce != null) { onLCDForce(LCDForceKind.Off); }
+                }
                 //onLCDForce(LCDForceKind.Off);
                 SwitchState(GameState.Boot);
                 break;
             case GameState.Boot:
                 if(state_first_time) {
                     // Turn everything on
-                    onLCDForce(LCDForceKind.On);
+                    if(onLCDForce != null) { onLCDForce(LCDForceKind.On); }
                     delay_timer = BOOT_DELAY;
                 }
                 if(delay_timer <= 0.0f) {
@@ -147,7 +149,7 @@ public class GameManager : MonoBehaviour {
                 break;
             case GameState.NewGame:
                 if(state_first_time) {
-                    onLCDForce(LCDForceKind.Normal);
+                    if(onLCDForce != null) { onLCDForce(LCDForceKind.Normal); }
                     Debug.Log("Going Normal");
                     delay_timer = GAME_START_DELAY;
                     ClearGame();
