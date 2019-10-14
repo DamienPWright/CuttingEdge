@@ -23,7 +23,12 @@ public struct Row {
     [SerializeField] public GameObject boss;
 }
 
+public struct RowInfo {
+    public List<BunnyState> bunnies;
+}
+
 public class GameManager : MonoBehaviour {
+
     [SerializeField] public GameObject bunny_prefab;
     [SerializeField] public GameObject player_prefab;
     [SerializeField] public GameObject boss_prefab;
@@ -37,10 +42,12 @@ public class GameManager : MonoBehaviour {
     [SerializeField] float top = 5f;
     [SerializeField] float left = -13f;
 
-    [SerializeField] public float BunnyTick = 0.25f;
-    [SerializeField] public float PlayerBulletTick = 0.125f;
-    [SerializeField] public float BossTick = 0.2f;
-    [SerializeField] public float BossBulletTick = 0.05f;
+    public float BunnyTick = 0.25f;
+    public float BunnyChance = 0.25f;
+    public int BunnyCount = 10;
+    public float PlayerBulletTick = 0.125f;
+    public float BossTick = 0.2f;
+    public float BossBulletTick = 0.05f;
 
     public const int N_ROWS = 3;
     public const int N_BUNNIES = 4;
@@ -50,6 +57,7 @@ public class GameManager : MonoBehaviour {
     
     [SerializeField] public static Color32 NORMAL_COLOR = new Color32(0, 0, 0, 255);
     [SerializeField] public static Color32 OFF_COLOR = new Color32(255, 0, 0, 0);
+
 
     float Step_Timer = 0.0f;
     float Step_Time = 1.0f;
@@ -142,10 +150,17 @@ public class GameManager : MonoBehaviour {
                 break;
             case GameState.BunnyStage:
                 if(state_first_time) {
+                    BunnyTick = BunnyTickForStage(stage);
+                    BunnyCount = BunniesForStage(stage);
+                    BunnyChance = BunnySpawnChanceForStage(stage);
+                    Debug.Log("Begin bunny stage: " + BunnyTick + " tick " + BunnyCount + " count " + BunnyChance + "chance");
                     if(onBeginBunny != null) {
                         onBeginBunny();
                     }
                 }
+
+                
+
                 //if bunny over, switch to boss
                 break;
             case GameState.BossStage:
@@ -165,6 +180,18 @@ public class GameManager : MonoBehaviour {
         state_first_time = false;
     }
 
+    private int BunniesForStage(int stage) {
+        return (int)((Mathf.Sqrt((float)stage) + 1.5f) * 2f + 2f);
+    }
+
+    private float BunnyTickForStage(int stage) {
+        return 0.05f * Mathf.Sqrt((float)stage * 3.5f) * 10f;
+    }
+
+    private float BunnySpawnChanceForStage(int stage)
+    {
+        return 0.05f * Mathf.Sqrt((float)stage * 3.5f);
+    }
     private void CreateRows()
     {
         int n = N_ROWS;
@@ -207,7 +234,7 @@ public class GameManager : MonoBehaviour {
     void Update()
     {
         delay_timer -= Time.deltaTime;
-        if(onPlayerLifeChange != null) { onPlayerLifeChange(lives); }
+//        if(onPlayerLifeChange != null) { onPlayerLifeChange(lives); }
 
         bunny_timer -= Time.deltaTime;
         player_bullet_timer -= Time.deltaTime;
@@ -216,54 +243,76 @@ public class GameManager : MonoBehaviour {
         if(bunny_timer <= 0) {
             bunny_timer = BunnyTick;
             if(onBunnyTick != null) {
-                onBunnyTick(rows);
+                var rowdata = new List<RowInfo>();
+                foreach (var r in rows)
+                {
+                    var newrow = new RowInfo();
+                    var newbunnies = new List<BunnyState>();
+                    foreach (var b in r.bunnies)
+                    {
+                        newbunnies.Add(b.GetComponent<BunnyController>().state);
+                    }
+                    newrow.bunnies = newbunnies;
+                    rowdata.Add(newrow);
+                }
+                onBunnyTick(rowdata);
+                if(Random.value < BunnyChance) {
+                    var row = Random.Range(0, N_ROWS - 1);
+                    onNewBunny(row);
+                }
             }
         }
         if(player_bullet_timer <= 0) {
             player_bullet_timer = PlayerBulletTick;
             if(onPlayerBulletTick != null) {
-                onPlayerBulletTick(rows);
+                var rowdata = new List<RowInfo>();
+                onPlayerBulletTick(rowdata);
             }
         }
         if(boss_timer <= 0) {
             boss_timer = BossTick;
             if(onBossTick != null) {
-                onBossTick(rows);
+                var rowdata = new List<RowInfo>();
+                onBossTick(rowdata);
             }
         }
         if(boss_bullet_timer <= 0) {
             boss_bullet_timer = BossBulletTick;
             if(onBossBulletTick != null) {
-                onBossBulletTick(rows);
+                var rowdata = new List<RowInfo>();
+                onBossBulletTick(rowdata);
             }
         }
 
-        if(Random.value < 0.1) {
-            score += 1;
-            highscore += 2;
-            stage += 1;
-            onScore(stage, score, highscore);
-        }
         HandleState();
     }
 
 
+    public void LifeDown() {
+        lives -= 1;
+        if(lives == 0) {
+            SwitchState(GameState.Ending);
+        }
+    }
 
     public delegate void ScoreEvent(int stage, int score, int highscore);
     public static event ScoreEvent onScore;
 
-    public delegate void PlayerBulletTickEvent(List<Row> rows);
+    public delegate void PlayerBulletTickEvent(List<RowInfo> rows);
     public static event PlayerBulletTickEvent onPlayerBulletTick;
 
     
-    public delegate void BunnyTickEvent(List<Row> rows);
+    public delegate void BunnyTickEvent(List<RowInfo> rows);
     public static event BunnyTickEvent onBunnyTick;
 
+    public delegate void NewBunnyEvent(int row);
+    public static event NewBunnyEvent onNewBunny;
 
-    public delegate void BossTickEvent(List<Row> rows);
+
+    public delegate void BossTickEvent(List<RowInfo> rows);
     public static event BossTickEvent onBossTick;
 
-    public delegate void BossBulletTickEvent(List<Row> rows);
+    public delegate void BossBulletTickEvent(List<RowInfo> rows);
     public static event BossBulletTickEvent onBossBulletTick;
 
     public delegate void BeginBossEvent();

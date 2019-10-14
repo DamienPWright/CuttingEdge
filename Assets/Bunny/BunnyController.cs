@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-enum BunnyState {
+public enum BunnyState {
     Off,
     Bunny,
 }
 
 public class BunnyController : LCD_Gameobject
 {
+    public BunnyState state = BunnyState.Off;
     public int col = -1;
+    public bool forced = false;
     private Dictionary<string, SpriteRenderer> renderers;
 
     // Start is called before the first frame update
@@ -27,7 +29,9 @@ public class BunnyController : LCD_Gameobject
             r.enabled = false;
         }
         GameManager.onBunnyTick += DoTick;
-    }
+        GameManager.onLCDForce += DoForce;
+        GameManager.onNewBunny += DoNewBunny;
+    }   
 
     // Update is called once per frame
     void Update()
@@ -44,7 +48,32 @@ public class BunnyController : LCD_Gameobject
 
     }
 
+    void DoForce(LCDForceKind kind) {
+        foreach(SpriteRenderer r in renderers.Values) {
+            switch(kind) {
+                case LCDForceKind.On:
+                    r.color = GameManager.NORMAL_COLOR;
+                    r.enabled = true;
+                    break;
+                case LCDForceKind.Off:
+                    r.color = GameManager.OFF_COLOR;
+                    forced = true;
+                    break;
+                default:
+                    r.color = GameManager.NORMAL_COLOR;
+                    r.enabled = false;
+                    forced = false;
+                    UpdateBunnies();
+                    break;
+            }
+            
+        }
+    }
     
+    void UpdateBunnies()
+    {
+        Debug.Log("Update Bunnies");
+    }
 /*  void OnEnable()
     {
         GameManager.onBunnyTick += DoTick;
@@ -54,7 +83,20 @@ public class BunnyController : LCD_Gameobject
         GameManager.onBunnyTick -= DoTick;
     }*/
 
-    void DoTick(List<Row> rows)
+    void DoTick(List<RowInfo> rows)
     {
+        if(col == 0 && state == BunnyState.Bunny) {
+            //GameManager._instance.LifeDown();
+        }
+        if(col + 1 < GameManager.N_BUNNIES) {
+            state = rows[row].bunnies[col + 1];
+        }
+    }
+
+    void DoNewBunny(int r)
+    {
+        if(r == row) {
+            state = BunnyState.Bunny;
+        }
     }
 }
