@@ -223,8 +223,15 @@ public class GameManager : MonoBehaviour {
                 break;
             case GameState.BossStage:
                 if(state_first_time) {
-                    if(onBeginBoss != null) {
-                        onBeginBoss();
+                    if(onSpawnBoss != null) {
+                        int r = Random.Range(0,3);
+                        if(r == 0) {
+                            onSpawnBoss(r, ShotKind.Magic);
+                        } else if(r == 1) {
+                            onSpawnBoss(r, ShotKind.Shield);
+                        } else if(r == 2) {
+                            onSpawnBoss(r, ShotKind.Sword);
+                        }
                     }
                 }
 
@@ -331,7 +338,7 @@ public class GameManager : MonoBehaviour {
 
                 onBunnyTick(rowdata);
                 if(Random.value < BunnyChance) {
-                    var row = Random.Range(0, N_ROWS - 1);
+                    var row = Random.Range(0, N_ROWS);
                     Debug.Log("New bunny on row " + row.ToString());
                     onNewBunny(row);
                 }
@@ -411,5 +418,7 @@ public class GameManager : MonoBehaviour {
     public delegate void LCDForceEvent(LCDForceKind kind);
     public static event LCDForceEvent onLCDForce;
 
+    public delegate void SpawnBossEvent(int row, ShotKind kind);
+    public static event SpawnBossEvent onSpawnBoss;
 }
 
