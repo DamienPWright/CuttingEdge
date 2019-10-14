@@ -160,11 +160,13 @@ public class GameManager : MonoBehaviour {
                     onScore(stage, score, highscore);
                 }
                 if(delay_timer <= 0.0f) {
-                    SwitchState(GameState.BunnyStage);
+                    SwitchState(GameState.PreBunny);
                 }
                 break;
             case GameState.PreBunny:
                 if(state_first_time) {
+                    stage += 1;
+                    onScore(stage, score, highscore);
                     delay_timer = PREBUNNY_DELAY;
                     if(onBeginBunny != null) {
                         onBeginBunny();
