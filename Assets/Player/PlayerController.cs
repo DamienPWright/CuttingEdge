@@ -25,8 +25,22 @@ public class PlayerController : LCD_Gameobject
         foreach(SpriteRenderer r in renderers.Values) {
             r.enabled = false;
         }
+        GameManager.onPlayerMove += DoMove;
     }
 
+    void DoMove(int r)
+    {
+        foreach (var render in renderers.Values)
+        {
+            if( (row == r) && ((row == 0 && render.name == "Upper") ||
+                (row == 1 && render.name == "Middle") ||
+                (row == 2 && render.name == "Lower"))) {
+                render.enabled = true;
+            } else {
+                render.enabled = false;
+            }
+        }
+    }
     // Update is called once per frame
     void Update()
     {

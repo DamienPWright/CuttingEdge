@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ShotKind {
+    None,
+    Shield,
+    Sword,
+    Magic,
+}
 public enum LCDForceKind {
     Normal,
     Off,
@@ -42,6 +48,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] float top = 5f;
     [SerializeField] float left = -13f;
 
+    public int player_row = 1;
     public float BunnyTick = 0.25f;
     public float BunnyChance = 0.25f;
     public int BunnyCount = 10;
@@ -88,6 +95,7 @@ public class GameManager : MonoBehaviour {
             return;
         }
         _instance = this;
+        QualitySettings.vSyncCount = 2;
         SwitchState(GameState.Start);
         ResetGame();
     }
@@ -102,6 +110,7 @@ public class GameManager : MonoBehaviour {
         ClearGame();
     }
     public void ClearGame() {
+        QualitySettings.vSyncCount = 2;
         score = 0;
         stage = 0;
         lives = N_LIVES;
@@ -150,6 +159,8 @@ public class GameManager : MonoBehaviour {
                 break;
             case GameState.BunnyStage:
                 if(state_first_time) {
+                    player_row = 1;
+                    onPlayerMove(player_row);
                     BunnyTick = BunnyTickForStage(stage);
                     BunnyCount = BunniesForStage(stage);
                     BunnyChance = BunnySpawnChanceForStage(stage);
@@ -159,8 +170,22 @@ public class GameManager : MonoBehaviour {
                     }
                 }
 
-                
+                if(player_row > 0 && Input.GetKeyDown(KeyCode.UpArrow)) {
+                    player_row -= 1;
+                    onPlayerMove(player_row);
+                } else if(player_row < 2 && Input.GetKeyDown(KeyCode.DownArrow)) {
+                    player_row += 1;
+                    onPlayerMove(player_row);
+                }
 
+                if(Input.GetKeyDown(KeyCode.Q)) {
+                    if(onPlayerShoot != null) { onPlayerShoot(player_row, ShotKind.Magic); }
+                } else if(Input.GetKeyDown(KeyCode.Q)) {
+                    if(onPlayerShoot != null) { onPlayerShoot(player_row, ShotKind.Shield); }
+
+                } else if(Input.GetKeyDown(KeyCode.Q)) {
+                    if(onPlayerShoot != null) { onPlayerShoot(player_row, ShotKind.Sword); }
+                }
                 //if bunny over, switch to boss
                 break;
             case GameState.BossStage:
@@ -329,8 +354,11 @@ public class GameManager : MonoBehaviour {
     public delegate void PlayerLifeChangeEvent(int lives);
     public static event PlayerLifeChangeEvent onPlayerLifeChange;
 
-    public delegate void PlayerShootEvent();
+    public delegate void PlayerShootEvent(int row, ShotKind kind);
     public static event PlayerShootEvent onPlayerShoot;
+
+    public delegate void PlayerMoveEvent(int row);
+    public static event PlayerMoveEvent onPlayerMove;
 
     public delegate void BossShootEvent();
     public static event BossShootEvent onBossShoot;
